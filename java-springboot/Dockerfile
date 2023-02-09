@@ -12,4 +12,4 @@ WORKDIR /app
 
 COPY --from=builder /workspace/target/java-springboot-*.jar /app/java-springboot.jar
 
-ENTRYPOINT ["java", "jar", "java-springboot.jar"]
+ENTRYPOINT ["java", "-jar", "java-springboot.jar"]
