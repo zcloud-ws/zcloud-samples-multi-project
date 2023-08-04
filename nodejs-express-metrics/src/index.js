@@ -20,7 +20,7 @@ let count = 0;
 
 const fibonacci = num => {
   if (num <= 1) {
-    if (count++ % 10 === 0) {
+    if (count++ % 100 === 0) {
       console.log(`fibonacci temp ${num}`);
       count = 0;
     }
