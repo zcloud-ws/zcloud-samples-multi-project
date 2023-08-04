@@ -17,6 +17,7 @@ app.get("/", (req, res) => {
 });
 
 const fibonacci = num => {
+  if (num % 10 === 0) console.log(`fibonacci temp ${num}`);
   if (num <= 1) return num;
   return fibonacci(num - 1) + fibonacci(num - 2);
 };
@@ -26,8 +27,8 @@ app.get("/load-fibonacci", (req, res) => {
   const { num } = req.query;
   const start = new Date();
   console.log(`fibonacci ${num}`);
-  fibonacci(num);
-  const message = `fibonacci ${num}, ${new Date() - start}ms`;
+  const fib = fibonacci(num);
+  const message = `fibonacci ${num}=${fib}, ${new Date() - start}ms`;
   console.log(message);
   res.status(200).send(JSON.stringify({ status: "success", message }));
 });
