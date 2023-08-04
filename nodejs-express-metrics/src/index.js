@@ -16,9 +16,16 @@ app.get("/", (req, res) => {
   res.status(200).send(JSON.stringify({ status: "success" }));
 });
 
+let count = 0;
+
 const fibonacci = num => {
-  if (num % 10 === 0) console.log(`fibonacci temp ${num}`);
-  if (num <= 1) return num;
+  if (num <= 1) {
+    if (count++ % 10 === 0) {
+      console.log(`fibonacci temp ${num}`);
+      count = 0;
+    }
+    return num;
+  }
   return fibonacci(num - 1) + fibonacci(num - 2);
 };
 
