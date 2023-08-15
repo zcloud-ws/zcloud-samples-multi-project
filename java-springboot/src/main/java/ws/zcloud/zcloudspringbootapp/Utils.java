@@ -1,19 +1,18 @@
 package ws.zcloud.zcloudspringbootapp;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class Utils {
-    static final int MB = 1024*1024;
-    static final byte[] dataByte;
+    static final int MB = 1024 * 1024;
+    static final String dataByte;
 
     static {
         Random rd = new Random();
-        dataByte = new byte[MB];
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < MB; i++) {
-            dataByte[i] = (byte) rd.nextInt(0, 255);
+            sb.append((byte) rd.nextInt(0, 255));
         }
+        dataByte = sb.toString();
     }
 
     public static long usedMemoryInMB() {
@@ -30,23 +29,21 @@ public class Utils {
     }
 
     public static void memoryAllocation(int sizeMb, long waitMillis) {
-        List<byte[]> data = new ArrayList<>();
-        printMemoryInfo();
-        long totalMemory = usedMemoryInMB();
-        while (totalMemory < sizeMb) {
-            data.add(dataByte);
-            totalMemory = usedMemoryInMB();
-        }
 
         Thread th = new Thread(() -> {
             try {
+                StringBuilder data = new StringBuilder();
+                printMemoryInfo();
+                long totalMemory = usedMemoryInMB();
+                while (totalMemory < sizeMb) {
+                    data.append(dataByte);
+                    totalMemory = usedMemoryInMB();
+                }
+                System.out.printf("Count chars %d \n", data.length());
                 printMemoryInfo();
                 Thread.sleep(waitMillis);
                 printMemoryInfo();
-                data.clear();
-                System.out.println("GC");
-                System.gc();
-                printMemoryInfo();
+                data.delete(0, data.length() -1);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -55,6 +52,9 @@ public class Utils {
         synchronized (th) {
             try {
                 th.wait();
+                System.out.println("GC");
+                System.gc();
+                printMemoryInfo();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
