@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js"
+    "dev": "NODE_OPTIONS=--max-old-space-size=256 node --expose-gc src/index.js",
+    "start": "node --expose-gc src/index.js"
   },
   "author": "Edimar Cardoso <edimarlnx@gmail.com>",
   "license": "ISC",
