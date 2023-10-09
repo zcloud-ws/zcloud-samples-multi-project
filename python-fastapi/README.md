@@ -1,0 +1,1 @@
+# Example based on Fast API Tutorial https://fastapi.tiangolo.com/tutorial/sql-databases/#migrations
