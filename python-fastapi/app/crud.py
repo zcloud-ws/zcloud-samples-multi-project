@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
-from . import models, schemas
+from app import schemas
+from app import models
 
 
 def get_user(db: Session, user_id: int):
