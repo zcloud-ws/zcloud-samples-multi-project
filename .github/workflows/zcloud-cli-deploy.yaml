@@ -25,10 +25,13 @@ on:
 jobs:
   DeployApp:
     runs-on: ubuntu-latest
+    container:
+      image: zcloudws/zcloud-cli
+      env:
+        ZCLOUD_USER_TOKEN: ${{ secrets.ZCLOUD_USER_TOKEN }}
     steps:
       - uses: actions/checkout@v3
       - name: Deploy with zCloud CLI
-        uses: docker://zcloudws/zcloud-cli:latest
         env:
           ZCLOUD_USER_TOKEN: ${{ secrets.ZCLOUD_USER_TOKEN }}
         run: zcloud deploy --env ${{ inputs.env_name }} --dir ${{ inputs.context_dir }}
