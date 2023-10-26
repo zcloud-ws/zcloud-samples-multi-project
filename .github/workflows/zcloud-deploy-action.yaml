@@ -1,0 +1,40 @@
+name: Deploy using GH Action
+on:
+  workflow_dispatch:
+    inputs:
+      context_dir:
+        description: 'Context dir'
+        required: true
+        default: 'nodejs-express'
+        type: choice
+        options:
+          - angular
+          - go-sample-api
+          - java-springboot
+          - nextjs
+          - nodejs-express
+          - nodejs-express-metrics
+          - nodejs-express-with-webpack
+          - nodejs-express-with-webpack-and-postgres
+          - python-django
+          - vue
+      env_name:
+        description: 'Env name'
+        required: true
+        type: string
+jobs:
+  DeployApp:
+    runs-on: ubuntu-latest
+    container:
+      image: zcloudws/zcloud-cli
+      env:
+        ZCLOUD_USER_TOKEN: ${{ secrets.ZCLOUD_USER_TOKEN }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy with action
+        uses: zcloud-deploy-action@v1
+        with:
+          user-token: ${{ secrets.ZCLOUD_USER_TOKEN }}
+          env: ${{ inputs.env_name }}
+          dir: ${{ inputs.context_dir }}
+          extra-args:  --env-var ENV1="VAL1" --env-var ENV2="VAL2"
