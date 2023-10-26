@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Deploy with action
-        uses: zcloud-deploy-action@v1
+        uses: actions/zcloud-deploy-action@v1
         with:
           user-token: ${{ secrets.ZCLOUD_USER_TOKEN }}
           env: ${{ inputs.env_name }}
