@@ -34,4 +34,4 @@ jobs:
       - name: Deploy with zCloud CLI
         env:
           ZCLOUD_USER_TOKEN: ${{ secrets.ZCLOUD_USER_TOKEN }}
-        run: zcloud deploy --env ${{ inputs.env_name }} --dir ${{ inputs.context_dir }}
+        run: zcloud deploy --env ${{ inputs.env_name }} --dir "${{ inputs.context_dir }}"
