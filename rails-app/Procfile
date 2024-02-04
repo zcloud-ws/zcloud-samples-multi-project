@@ -1,1 +1,1 @@
-web: PATH=$PATH:$PWD/bin rake db:migrate && rails s
+web: export PATH=$PATH:$PWD/bin && chown 1002 ./storage -R && rake db:migrate && rails s
