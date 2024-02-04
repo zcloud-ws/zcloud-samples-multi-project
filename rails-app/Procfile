@@ -1,1 +1,1 @@
-web: export PATH=$PATH:$PWD/bin && rake db:migrate && rails s
+web: bin/rake db:migrate && bin/rails s
