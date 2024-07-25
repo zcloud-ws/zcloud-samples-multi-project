@@ -1,37 +1,31 @@
-import { Meteor } from 'meteor/meteor';
-import { LinksCollection } from '/imports/api/links';
+import { Meteor } from "meteor/meteor";
 
-async function insertLink({ title, url }) {
-  await LinksCollection.insertAsync({ title, url, createdAt: new Date() });
-}
+import {
+  addRandomJob,
+  registerBullBoard,
+  workerProcess,
+} from "../imports/api/bullmq/server/bullmq";
+
+const userOptions = {
+  username: "zcloud",
+  password: "zcloud",
+  email: "test@zcloud.ws",
+  profile: {
+    name: "Test User",
+  },
+};
 
 Meteor.startup(async () => {
-  // If the Links collection is empty, add some data.
-  if (await LinksCollection.find().countAsync() === 0) {
-    await insertLink({
-      title: 'Do the Tutorial',
-      url: 'https://react-tutorial.meteor.com/simple-todos/01-creating-app.html',
-    });
-
-    await insertLink({
-      title: 'Follow the Guide',
-      url: 'https://guide.meteor.com',
-    });
-
-    await insertLink({
-      title: 'Read the Docs',
-      url: 'https://docs.meteor.com',
-    });
-
-    await insertLink({
-      title: 'Discussions',
-      url: 'https://forums.meteor.com',
-    });
+  // Create a new user if none exists
+  if ((await Meteor.users.find().countAsync()) === 0) {
+    await Accounts.createUserAsync(userOptions);
   }
 
-  // We publish the entire Links collection to all clients.
-  // In order to be fetched in real-time to the clients
-  Meteor.publish("links", function () {
-    return LinksCollection.find();
-  });
+  registerBullBoard();
+  addRandomJob();
+  if (!workerProcess.isRunning()) {
+    workerProcess.run().catch((err) => {
+      console.log(`Error running worker: ${err}`);
+    });
+  }
 });
