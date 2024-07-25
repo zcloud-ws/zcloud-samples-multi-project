@@ -22,6 +22,16 @@ docker run --rm -p 6379:6379 redis
 - `REDIS_USER`: Redis user (default: `default`)
 - `REDIS_DB`: Redis database (default: 0)
 
+## Copy/Paste zCloud
+
+```dotenv
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=""
+REDIS_USER=default
+REDIS_DB=0
+```
+
 ## Start project
 
 1. Run `meteor npm install`
