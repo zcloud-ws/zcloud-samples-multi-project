@@ -12,7 +12,8 @@ const queueName = "simpleQueue";
 const redisConnection = {
   host: process.env.REDIS_HOST || "localhost",
   port: process.env.REDIS_PORT || 6379,
-  user: process.env.REDIS_USER || "default",
+  username: process.env.REDIS_USER || "default",
+  db: process.env.REDIS_DB || 0,
   password: process.env.REDIS_PASSWORD || "",
 };
 
