@@ -6,7 +6,7 @@ import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
 import { ExpressAdapter } from "@bull-board/express";
 import { Queue, Worker } from "bullmq";
 
-const bullmqUIPath = "/bullmq/ui";
+const dashboardPath = "/bullmq/ui";
 const queueName = "simpleQueue";
 
 const redisConnection = {
@@ -71,14 +71,16 @@ export const checkLoggedUser = async (req) => {
 export const registerBullBoard = () => {
   console.log(`Register BullMQ Board...`);
   const serverAdapter = new ExpressAdapter();
-  serverAdapter.setBasePath(bullmqUIPath);
+  serverAdapter.setBasePath(dashboardPath);
   createBullBoard({
     queues: [new BullMQAdapter(simpleQueue)],
     serverAdapter,
   });
-  WebApp.connectHandlers.use(bullmqUIPath, cookieParser());
+  // Parse cookies
+  WebApp.connectHandlers.use(dashboardPath, cookieParser());
+  // Check if user is logged
   WebApp.connectHandlers.use(
-    bullmqUIPath,
+    dashboardPath,
     Meteor.bindEnvironment((req, res, next) =>
       checkLoggedUser(req, res, next)
         .then((logged) => {
@@ -96,5 +98,6 @@ export const registerBullBoard = () => {
         }),
     ),
   );
-  WebApp.connectHandlers.use(bullmqUIPath, serverAdapter.getRouter());
+  // Add BullBoard to WebApp
+  WebApp.connectHandlers.use(dashboardPath, serverAdapter.getRouter());
 };

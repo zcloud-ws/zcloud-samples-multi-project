@@ -6,7 +6,7 @@ import {
   workerProcess,
 } from "../imports/api/bullmq/server/bullmq";
 
-const userOptions = {
+const userData = {
   username: "zcloud",
   password: "zcloud",
   email: "test@zcloud.ws",
@@ -18,7 +18,7 @@ const userOptions = {
 Meteor.startup(async () => {
   // Create a new user if none exists
   if ((await Meteor.users.find().countAsync()) === 0) {
-    await Accounts.createUserAsync(userOptions);
+    await Accounts.createUserAsync(userData);
   }
 
   // Register BullBoard

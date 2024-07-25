@@ -2,19 +2,19 @@
 
 This is a simple Meteor project that demonstrates how to use BullMQ with Meteor.
 
-Requirements:
+## Requirements
 
 - Node.js
 - Meteor
 - Redis
 
-## Start redis server
+## Start Redis Server
 
 ```shell
 docker run --rm -p 6379:6379 redis
 ```
 
-## Environment variables
+## Environment Variables
 
 - `REDIS_HOST`: Redis host (default: `localhost`)
 - `REDIS_PORT`: Redis port (default: 6379)
@@ -32,7 +32,7 @@ REDIS_USER=default
 REDIS_DB=0
 ```
 
-## Start project
+## Start Project
 
 1. Run `meteor npm install`
 2. Run `meteor npm start`
@@ -44,24 +44,25 @@ REDIS_DB=0
 
 ## Explanation
 
-### Starttup
+### Startup
 
-[server/main.js](server/main.js)
+`server/main.js`
 
-- Register BullMQ Dashboard;
-- Create queue;
-- Add jobs;
-- Start worker;
+- Register BullMQ Dashboard
+- Create queue
+- Add jobs
+- Start worker
 
-[bullmq.js](imports/api/bullmq/server/bullmq.js)
+`imports/api/bullmq/server/bullmq.js`
 
-- Redir connecton
-- Queue definition;
-- Add jobs definition;
-- Worker definition;
-- Register BullMQ Dashboard definition;
-- Handler authentication to secure dashboard;
+- Redis connection
+- Queue definition
+- Add jobs definition
+- Worker definition
+- Register BullMQ Dashboard definition
+- Handler authentication to secure dashboard
 
-[client/main.jsx](client/main.jsx)
+`client/main.jsx`
 
-- Configure login/logout handlers to set/unset cookies with meteor user token;
+- Configure login/logout handlers to set/unset cookies with Meteor user token
+```
