@@ -21,8 +21,11 @@ Meteor.startup(async () => {
     await Accounts.createUserAsync(userOptions);
   }
 
+  // Register BullBoard
   registerBullBoard();
+  // Add a random job
   addRandomJob();
+  // Start the worker process
   if (!workerProcess.isRunning()) {
     workerProcess.run().catch((err) => {
       console.log(`Error running worker: ${err}`);
