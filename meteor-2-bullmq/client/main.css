@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  --tw-bg-opacity: 1;
+  --tw-text-opacity: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: rgb(35 37 38 / var(--tw-bg-opacity));
+  color: rgb(165 164 164 / var(--tw-text-opacity));
+  font-family: Lexend, ui-sans-serif, system-ui;
+}
