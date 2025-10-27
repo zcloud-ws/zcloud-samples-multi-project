@@ -11,6 +11,7 @@ on:
           - angular
           - go-sample-api
           - java-springboot
+          - meteor-mongodb-search
           - nextjs
           - nodejs-express
           - nodejs-express-metrics
