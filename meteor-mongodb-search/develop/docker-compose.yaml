@@ -1,0 +1,45 @@
+# https://www.mongodb.com/docs/atlas/atlas-search/tutorial/?deployment-type=self
+services:
+  mongod:
+    image: quay.io/mongodb/mongodb-community-server:8.2-ubi8
+    container_name: mongod-community
+    command: >-
+      mongod
+      --config /etc/mongod.conf
+      --replSetMember=mongod.search-community:27019
+    ports:
+      - 27019:27019
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - mongod_data:/data/db
+      - ./dump:/dump:ro
+      - ./mongod.conf:/etc/mongod.conf:ro
+      - ./init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
+    networks:
+      - search-community
+
+
+  mongot:
+    image: quay.io/mongodb/mongodb-search:0.54.0
+    container_name: mongot-community-pupr
+    networks:
+      - search-community
+    volumes:
+      - mongot_data:/data/mongot
+      - ./mongot.conf:/mongot-community/config.default.yml
+      - ./pwfile:/mongot-community/pwfile:ro
+    depends_on:
+      - mongod
+    ports:
+      - 27028:27028  # Query server port from config
+      - 9946:9946    # Metrics port from config
+
+volumes:
+  mongod_data:
+  mongot_data:
+
+networks:
+  search-community:
+    name: search-community
+    #external: true  # Use an external network if it exists. Comment this line if you want to create a new network.
