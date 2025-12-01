@@ -47,6 +47,14 @@ index.get("/", async (req, res) => {
   res.status(200).send(JSON.stringify({ status: "success", memoryAllocated: "20MB", delay: "20s" }));
 });
 
-index.listen(port, () => {
+const server = index.listen(port, () => {
   console.log(`Listen on :${port}`);
+});
+
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received, shutting down gracefully");
+  server.close(() => {
+    console.log("Server closed");
+    process.exit(0);
+  });
 });
