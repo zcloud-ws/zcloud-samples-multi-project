@@ -1,0 +1,270 @@
+# Meteor MongoDB Search
+
+This project demonstrates how to use MongoDB Atlas Search in a local development environment with Meteor.js. It uses MongoDB Community Server with the Atlas Search functionality through the `mongot` component.
+
+## 🚀 Live Demo
+
+Try the live demo: **[https://meteor-mongodb-search-demo.quave.cloud](https://meteor-mongodb-search-demo.quave.cloud)**
+
+The demo showcases real-time search with MongoDB Atlas Search on Airbnb sample data.
+
+> **Disclaimer:** The majority of this codebase was created using [Claude Code](https://claude.com/claude-code), an AI-powered coding assistant. This includes the UI components, search functionality, MongoDB integration, and documentation.
+
+## Prerequisites
+
+- [Docker](https://www.docker.com/get-started) and Docker Compose installed
+- [Meteor](https://www.meteor.com/install) installed
+- Node.js and npm (usually installed with Meteor)
+
+## Features
+
+- **Real-time Search**: MongoDB Atlas Search integration with autocomplete and fuzzy matching
+- **Search Highlighting**: Search terms are highlighted in results
+- **Debounced Input**: 300ms debounce to optimize search performance
+- **Responsive UI**: Built with React and Tailwind CSS
+- **Search Scoring**: Results ranked by relevance score
+- **Demo Data**: Airbnb sample dataset with listings and reviews
+
+## Technologies
+
+- **Frontend**: React, Tailwind CSS
+- **Backend**: Meteor.js
+- **Database**: MongoDB Community Server with Atlas Search (mongot)
+- **Infrastructure**: Docker, Docker Compose
+- **Data**: Airbnb sample database
+
+## Project Structure
+
+```
+meteor-mongodb-search/
+├── develop/                    # Docker development environment
+│   ├── docker-compose.yaml    # Docker Compose configuration
+│   ├── mongod.conf            # MongoDB server configuration
+│   ├── mongot.conf            # MongoDB Atlas Search configuration
+│   ├── init-mongo.sh          # Initialization script
+│   ├── pwfile                 # Password file for mongot authentication
+│   └── dump/                  # Sample data (Airbnb listings)
+├── client/                    # Meteor client code
+├── server/                    # Meteor server code
+├── imports/                   # Shared code and API
+│   ├── api/                   # Meteor methods and collections
+│   └── ui/                    # React components
+└── package.json              # Node.js dependencies
+```
+
+## Getting Started
+
+> **💡 Tip:** Want to try it first? Check out the [live demo](https://meteor-mongodb-search-demo.quave.cloud) before setting up locally.
+
+### Step 1: Start the MongoDB Environment
+
+The project includes a Docker Compose setup that runs:
+
+- **MongoDB Community Server** (mongod) on port `27019`
+- **MongoDB Atlas Search** (mongot) on ports `27028` (query) and `9946` (metrics)
+
+Navigate to the development directory and start the containers:
+
+```bash
+cd develop
+docker-compose up -d
+```
+
+This will:
+
+1. Create and start the MongoDB and Atlas Search containers
+2. Initialize a replica set
+3. Create a user `mongotUser` with `searchCoordinator` role
+4. Restore the Airbnb sample dataset to the `airbnb-samples` database
+
+**Note:** The first time you run this, it may take a few minutes to download the Docker images and initialize the database.
+
+### Step 2: Verify the MongoDB Setup
+
+Check that the containers are running:
+
+```bash
+docker-compose ps
+```
+
+You should see both `mongod-community` and `mongot-community-pupr` containers running.
+
+To verify the data was loaded, you can connect to MongoDB:
+
+```bash
+docker exec -it mongod-community mongosh
+```
+
+Then in the MongoDB shell:
+
+```javascript
+use airbnb-samples
+db.listingsAndReviews.countDocuments()
+```
+
+Type `exit` to leave the MongoDB shell.
+
+### Step 3: Install Meteor Dependencies
+
+Navigate back to the project root and install the npm dependencies:
+
+```bash
+cd ..
+meteor npm install
+```
+
+### Step 4: Start the Meteor Application
+
+Run the Meteor application:
+
+```bash
+meteor npm start
+```
+
+Or directly with Meteor:
+
+```bash
+MONGO_URL='mongodb://localhost:27019/airbnb-samples' meteor run
+```
+
+The application will start on `http://localhost:3000` by default.
+
+## Application Features
+
+### Search Interface
+
+The application includes a modern, responsive search interface with:
+
+- **SearchBar Component**: Real-time search input with debounce (300ms) and clear button
+- **ResultsList Component**: Grid layout displaying search results with loading states
+- **ResultCard Component**: Individual listing cards showing:
+  - Property images
+  - Name and summary
+  - Description with text truncation
+  - Price per night
+  - Search relevance score
+  - Highlighted search terms (when applicable)
+
+### Search Functionality
+
+The search uses MongoDB Atlas Search with:
+
+- **Autocomplete**: Provides suggestions as you type
+- **Fuzzy Matching**: Finds results even with typos (maxEdits: 1)
+- **Highlight**: Shows which parts of the description match your search
+- **Scoring**: Results ranked by relevance
+- **Limit**: Returns top 20 results
+
+## Configuration
+
+### MongoDB Connection
+
+The Meteor application connects to MongoDB using the connection string defined in `package.json`:
+
+```bash
+MONGO_URL='mongodb://localhost:27019/airbnb-samples'
+```
+
+- **Host:** `localhost`
+- **Port:** `27019`
+- **Database:** `airbnb-samples`
+
+### Docker Compose Services
+
+#### MongoDB (mongod)
+
+- Exposed port: `27019` (mapped from internal port `27017`)
+- Configuration file: `develop/mongod.conf`
+- Data volume: `mongod_data`
+- Sample data: Loaded from `develop/dump/airbnb-samples/`
+
+#### MongoDB Atlas Search (mongot)
+
+- Query server port: `27028`
+- Metrics port: `9946`
+- Configuration file: `develop/mongot.conf`
+- Data volume: `mongot_data`
+
+## Sample Data
+
+The project includes the Airbnb sample dataset with listings and reviews. The data is automatically restored when you first start the Docker containers.
+
+## Stopping the Environment
+
+To stop the Docker containers:
+
+```bash
+cd develop
+docker-compose down
+```
+
+To stop and remove all data volumes:
+
+```bash
+docker-compose down -v
+```
+
+**Warning:** Using `-v` will delete all MongoDB data, and you'll need to restore the sample data again.
+
+## Troubleshooting
+
+### Port Already in Use
+
+If you get an error about ports being in use, check if you have other MongoDB instances running:
+
+```bash
+# Check for processes using port 27019
+lsof -i :27019
+
+# Or on Linux
+sudo netstat -tulpn | grep 27019
+```
+
+### Connection Refused
+
+If Meteor can't connect to MongoDB:
+
+1. Verify the containers are running: `docker-compose ps`
+2. Check container logs: `docker-compose logs mongod`
+3. Ensure the port mapping is correct in `docker-compose.yaml`
+
+### Sample Data Not Loading
+
+If the sample data doesn't load:
+
+1. Check the init script logs: `docker-compose logs mongod`
+2. Verify the dump files exist in `develop/dump/airbnb-samples/`
+3. Manually restore the data:
+   ```bash
+   docker exec -it mongod-community mongorestore --db=airbnb-samples /dump/airbnb-samples
+   ```
+
+## Additional Scripts
+
+The project includes additional npm scripts:
+
+- `npm test` - Run Meteor tests once
+- `npm run test-app` - Run full app tests in watch mode
+- `npm run visualize` - Visualize bundle size in production mode
+
+## Resources
+
+- [MongoDB Atlas Search Tutorial](https://www.mongodb.com/docs/atlas/atlas-search/tutorial/?deployment-type=self)
+- [Meteor Documentation](https://docs.meteor.com/)
+- [MongoDB Community Server](https://www.mongodb.com/docs/manual/)
+- [Claude Code](https://claude.com/claude-code) - AI coding assistant used to build this project
+
+## Deployment
+
+This application is deployed on Quave Cloud's infrastructure at:
+**[https://meteor-mongodb-search-demo.quave.cloud](https://meteor-mongodb-search-demo.quave.cloud)**
+
+Want to deploy your own Meteor app? Visit [Quave Cloud](https://www.quave.cloud) for easy Meteor deployment solutions.
+
+## Credits
+
+Developed by [Quave Cloud](https://www.quave.cloud)
+
+## License
+
+Private project - see repository for license information.
