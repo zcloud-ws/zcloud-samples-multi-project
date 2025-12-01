@@ -24,18 +24,22 @@ if (process.env.ENABLE_BENCHMARKING) {
 }
 
 index.get("/health", (req, res) => {
+  console.log("GET /health");
   res.status(200).send({ status: "ok" });
 });
 
 index.get("/internal-error", (req, res) => {
+  console.log("GET /internal-error");
   res.status(500).send({ error: "Internal Server Error" });
 });
 
 index.get("/not-found", (req, res) => {
+  console.log("GET /not-found");
   res.status(404).send({ error: "Not Found" });
 });
 
 index.get("/", async (req, res) => {
+  console.log("GET /");
   // Allocate ~20MB of memory, 1MB at a time with 1s delay between each
   const memoryHog = [];
   for (let i = 0; i < 20; i++) {
