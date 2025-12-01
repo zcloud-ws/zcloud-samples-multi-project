@@ -23,6 +23,14 @@ if (process.env.ENABLE_BENCHMARKING) {
   );
 }
 
+index.get("/internal-error", (req, res) => {
+  res.status(500).send({ error: "Internal Server Error" });
+});
+
+index.get("/not-found", (req, res) => {
+  res.status(404).send({ error: "Not Found" });
+});
+
 index.get("/", async (req, res) => {
   // Allocate ~20MB of memory, 1MB at a time with 1s delay between each
   const memoryHog = [];
