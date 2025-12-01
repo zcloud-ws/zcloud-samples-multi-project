@@ -23,6 +23,10 @@ if (process.env.ENABLE_BENCHMARKING) {
   );
 }
 
+index.get("/health", (req, res) => {
+  res.status(200).send({ status: "ok" });
+});
+
 index.get("/internal-error", (req, res) => {
   res.status(500).send({ error: "Internal Server Error" });
 });
