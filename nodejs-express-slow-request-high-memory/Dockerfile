@@ -13,4 +13,4 @@ RUN npm install
 # Copy the go source
 COPY --chown=node:node . .
 
-ENTRYPOINT ["npm", "run", "start"]
+ENTRYPOINT ["node", "--expose-gc", "src/index.js"]
