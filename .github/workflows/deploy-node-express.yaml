@@ -12,3 +12,4 @@ jobs:
         with:
           env-token: ${{ secrets.ZCLOUD_ENV_TOKEN }}
           env: "filipe-test-100-node-test-production"
+          dir: "node-express"
