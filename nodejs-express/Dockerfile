@@ -1,4 +1,4 @@
-FROM node:18 as builder
+FROM node:24-alpine AS builder
 
 USER node:node
 
@@ -10,7 +10,7 @@ WORKDIR /app
 
 RUN npm install
 
-# Copy the go source
+# Copy the source
 COPY --chown=node:node . .
 
 ENTRYPOINT ["npm", "run", "start"]

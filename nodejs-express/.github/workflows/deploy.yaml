@@ -10,5 +10,5 @@ jobs:
       - name: Deploy
         uses: zcloud-ws/zcloud-deploy-action@main
         with:
-          env-token: ${{ secrets.ZCLOUD_ENV_TOKEN }}
-          env: "filipe-test-100-node-test-production"
+          env-token: ${{ secrets.QUAVE_ONE_ENV_TOKEN }}
+          env: "company-app-prod"
