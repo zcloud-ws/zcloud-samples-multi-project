@@ -1,0 +1,21 @@
+{
+  "name": "nodejs-kafka",
+  "version": "1.0.0",
+  "description": "Node.js Kafka demo with producer, consumer, and real-time web UI",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js"
+  },
+  "author": "Edimar Cardoso <edimarlnx@gmail.com>",
+  "license": "ISC",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1",
+    "kafkajs": "^2.2.4"
+  }
+}

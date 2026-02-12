@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kafka Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    };
+  </script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+  <header class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+    <div class="flex items-center justify-between max-w-7xl mx-auto">
+      <h1 class="text-2xl font-bold text-white">Kafka Dashboard</h1>
+      <div class="flex items-center gap-2">
+        <span id="status-dot" class="w-3 h-3 rounded-full bg-yellow-500"></span>
+        <span id="status-text" class="text-sm text-gray-400">Connecting...</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Orders Column -->
+      <div class="bg-gray-800 rounded-lg border border-gray-700 flex flex-col max-h-[calc(100vh-160px)]">
+        <div class="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
+          <h2 class="text-lg font-semibold text-blue-400">Orders</h2>
+          <span id="orders-count" class="text-xs bg-blue-900 text-blue-300 px-2 py-1 rounded-full">0</span>
+        </div>
+        <div id="orders-list" class="flex-1 overflow-y-auto p-3 space-y-2"></div>
+      </div>
+
+      <!-- Notifications Column -->
+      <div class="bg-gray-800 rounded-lg border border-gray-700 flex flex-col max-h-[calc(100vh-160px)]">
+        <div class="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
+          <h2 class="text-lg font-semibold text-amber-400">Notifications</h2>
+          <span id="notifications-count" class="text-xs bg-amber-900 text-amber-300 px-2 py-1 rounded-full">0</span>
+        </div>
+        <div id="notifications-list" class="flex-1 overflow-y-auto p-3 space-y-2"></div>
+      </div>
+
+      <!-- Logs Column -->
+      <div class="bg-gray-800 rounded-lg border border-gray-700 flex flex-col max-h-[calc(100vh-160px)]">
+        <div class="px-4 py-3 border-b border-gray-700 flex items-center justify-between">
+          <h2 class="text-lg font-semibold text-emerald-400">Logs</h2>
+          <span id="logs-count" class="text-xs bg-emerald-900 text-emerald-300 px-2 py-1 rounded-full">0</span>
+        </div>
+        <div id="logs-list" class="flex-1 overflow-y-auto p-3 space-y-2"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const MAX_MESSAGES = 50;
+    const counts = { orders: 0, notifications: 0, logs: 0 };
+
+    const typeColors = {
+      info: 'bg-blue-900/50 border-blue-700',
+      warning: 'bg-yellow-900/50 border-yellow-700',
+      error: 'bg-red-900/50 border-red-700',
+      success: 'bg-green-900/50 border-green-700',
+    };
+
+    const levelColors = {
+      DEBUG: 'text-gray-400',
+      INFO: 'text-blue-400',
+      WARN: 'text-yellow-400',
+      ERROR: 'text-red-400',
+    };
+
+    const statusColors = {
+      pending: 'bg-yellow-700 text-yellow-200',
+      confirmed: 'bg-blue-700 text-blue-200',
+      shipped: 'bg-purple-700 text-purple-200',
+      delivered: 'bg-green-700 text-green-200',
+      cancelled: 'bg-red-700 text-red-200',
+    };
+
+    function formatTime(ts) {
+      return new Date(ts).toLocaleTimeString();
+    }
+
+    function renderOrder(data, timestamp) {
+      return `
+        <div class="bg-gray-700/50 border border-gray-600 rounded-lg p-3 text-sm animate-fade-in">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-mono text-blue-300 text-xs">${data.orderId}</span>
+            <span class="text-xs text-gray-500">${formatTime(timestamp)}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-white">${data.product} x${data.quantity}</span>
+            <span class="text-green-400 font-semibold">$${data.price}</span>
+          </div>
+          <div class="flex items-center justify-between mt-1">
+            <span class="text-xs text-gray-400">${data.customer}</span>
+            <span class="text-xs px-2 py-0.5 rounded ${statusColors[data.status] || 'bg-gray-600'}">${data.status}</span>
+          </div>
+        </div>`;
+    }
+
+    function renderNotification(data, timestamp) {
+      const color = typeColors[data.type] || 'bg-gray-700/50 border-gray-600';
+      return `
+        <div class="${color} border rounded-lg p-3 text-sm">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-semibold capitalize text-amber-300">${data.type}</span>
+            <span class="text-xs text-gray-500">${formatTime(timestamp)}</span>
+          </div>
+          <p class="text-gray-200">${data.message}</p>
+          <span class="text-xs text-gray-500 mt-1 block">${data.source} &middot; ${data.id}</span>
+        </div>`;
+    }
+
+    function renderLog(data, timestamp) {
+      const levelClass = levelColors[data.level] || 'text-gray-400';
+      return `
+        <div class="bg-gray-700/50 border border-gray-600 rounded-lg p-3 text-sm font-mono">
+          <div class="flex items-center justify-between mb-1">
+            <span class="${levelClass} font-bold text-xs">[${data.level}]</span>
+            <span class="text-xs text-gray-500">${formatTime(timestamp)}</span>
+          </div>
+          <p class="text-gray-200 text-xs">${data.message}</p>
+          <div class="flex items-center justify-between mt-1">
+            <span class="text-xs text-gray-500">${data.service}</span>
+            <span class="text-xs text-gray-600">${data.traceId}</span>
+          </div>
+        </div>`;
+    }
+
+    const renderers = {
+      orders: renderOrder,
+      notifications: renderNotification,
+      logs: renderLog,
+    };
+
+    function addMessage(topic, data, timestamp) {
+      const list = document.getElementById(`${topic}-list`);
+      if (!list) return;
+
+      counts[topic]++;
+      document.getElementById(`${topic}-count`).textContent = counts[topic];
+
+      const html = renderers[topic](data, timestamp);
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = html;
+      list.prepend(wrapper.firstElementChild);
+
+      // Cap messages per column
+      while (list.children.length > MAX_MESSAGES) {
+        list.removeChild(list.lastElementChild);
+      }
+    }
+
+    function setStatus(connected) {
+      const dot = document.getElementById('status-dot');
+      const text = document.getElementById('status-text');
+      if (connected) {
+        dot.className = 'w-3 h-3 rounded-full bg-green-500';
+        text.textContent = 'Connected';
+        text.className = 'text-sm text-green-400';
+      } else {
+        dot.className = 'w-3 h-3 rounded-full bg-red-500';
+        text.textContent = 'Disconnected';
+        text.className = 'text-sm text-red-400';
+      }
+    }
+
+    function connect() {
+      const es = new EventSource('/events');
+
+      es.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        if (msg.type === 'connected') {
+          setStatus(true);
+          return;
+        }
+        if (msg.type === 'message') {
+          addMessage(msg.topic, msg.data, msg.timestamp);
+        }
+      };
+
+      es.onerror = () => {
+        setStatus(false);
+        es.close();
+        // Auto-reconnect after 3 seconds
+        setTimeout(connect, 3000);
+      };
+    }
+
+    connect();
+  </script>
+</body>
+</html>
