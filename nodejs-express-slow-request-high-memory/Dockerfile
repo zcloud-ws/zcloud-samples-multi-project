@@ -13,4 +13,4 @@ RUN npm install
 # Copy the go source
 COPY --chown=node:node . .
 
-ENTRYPOINT ["node", "--expose-gc", "src/index.js"]
+ENTRYPOINT ["node", "--expose-gc", "--max-old-space-size=768", "src/index.js"]

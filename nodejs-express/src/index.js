@@ -1,4 +1,5 @@
 import express from "express";
+import cowsay from "cowsay";
 import { allocateMemory } from "./utils.js";
 
 const index = express();
@@ -24,8 +25,8 @@ if (process.env.ENABLE_BENCHMARKING) {
 }
 
 index.get("/", (req, res) => {
-  res.set("Content-type", "application/json");
-  res.status(200).send(JSON.stringify({ status: "success" }));
+  res.set("Content-type", "text/plain");
+  res.status(200).send(cowsay.say({ text: "Hello World" }));
 });
 
 index.listen(port, () => {
