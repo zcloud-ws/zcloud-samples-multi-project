@@ -24,6 +24,11 @@ if (process.env.ENABLE_BENCHMARKING) {
   );
 }
 
+index.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} ${req.method} ${req.url}`);
+  next();
+});
+
 index.get("/", (req, res) => {
   res.set("Content-type", "text/plain");
   res.status(200).send(cowsay.say({ text: "Hello World" }));
