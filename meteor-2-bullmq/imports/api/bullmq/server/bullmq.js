@@ -15,6 +15,11 @@ const redisConnection = {
   username: process.env.REDIS_USER || "default",
   db: process.env.REDIS_DB || 0,
   password: process.env.REDIS_PASSWORD || "",
+ ...(process.env.REDIS_USE_TLS ? {
+     tls: {
+        ca: process.env.REDIS_CA_PEM || "",
+     }
+ } : {})
 };
 
 const simulateLongProcess = (ms) => {

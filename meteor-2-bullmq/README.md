@@ -21,6 +21,9 @@ docker run --rm -p 6379:6379 redis
 - `REDIS_PASSWORD`: Redis password (default: '')
 - `REDIS_USER`: Redis user (default: `default`)
 - `REDIS_DB`: Redis database (default: 0)
+- `REDIS_TLS`: Enable TLS connection when set to `true` (default: `false`)
+- `REDIS_CA_FILE`: Path to a PEM file with the CA certificate used to validate the Redis server (optional; only used when `REDIS_TLS=true`)
+- `REDIS_CA_BASE64`: Base64-encoded PEM CA certificate, as an alternative to `REDIS_CA_FILE` for environments where mounting a file is inconvenient (optional)
 
 ## Env to Copy/Paste on zCloud
 
@@ -30,6 +33,9 @@ REDIS_PORT=6379
 REDIS_PASSWORD=""
 REDIS_USER=default
 REDIS_DB=0
+REDIS_TLS=false
+REDIS_CA_FILE=
+REDIS_CA_BASE64=
 ```
 
 ## Start Project
