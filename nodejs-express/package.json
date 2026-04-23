@@ -14,6 +14,7 @@
     "node": ">=24.0.0"
   },
   "dependencies": {
+    "cowsay": "^1.6.0",
     "express": "^5.2.1"
   }
 }

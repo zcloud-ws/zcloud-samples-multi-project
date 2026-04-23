@@ -40,15 +40,8 @@ index.get("/not-found", (req, res) => {
 
 index.get("/", async (req, res) => {
   console.log("GET /");
-  // Allocate ~20MB of memory, 1MB at a time with 1s delay between each
-  const memoryHog = [];
-  for (let i = 0; i < 20; i++) {
-    memoryHog.push(Buffer.alloc(1024 * 1024, "x")); // 1MB each
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // 1s delay
-  }
-
   res.set("Content-type", "application/json");
-  res.status(200).send(JSON.stringify({ status: "success", memoryAllocated: "20MB", delay: "20s" }));
+  res.status(200).send(JSON.stringify({ status: "success" }));
 });
 
 const server = index.listen(port, () => {
